@@ -1,16 +1,22 @@
 package menuLayout;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
+import java.util.ArrayList;
+
 public class menuController {
-	
 	
 	private String hostname;
 	private int port;
 	private boolean isConnected = true;
+	private Client client;
 	
 	@FXML
 	TextField loginFormUsername;
@@ -21,23 +27,35 @@ public class menuController {
 	@FXML
 	TextField chatNameText;
 	
+	@FXML
+	ListView listView;
+	
+	@FXML
+	Label labelAbovePlay;
+	
+	private static ObservableList < String > listOfMessages = FXCollections.observableList ( new ArrayList <>( ) );;
+	
 	
 	public void connectButtonPressed ( ActionEvent event ) {
-		
-		System.out.println ("Button pressed!" );
-		System.out.println ("Box contains: " + loginFormUsername.getText () );
-		
-		Client client = new Client("127.0.0.1", 19999);
-		client.connect( loginFormUsername.getText () );
+		this.client = new Client ( "127.0.0.1" , 19999 );
+		client.connect ( loginFormUsername.getText ( ) );
+		labelAbovePlay.setText ( "Welcome " + loginFormUsername.getText ( ) + " press the play button to start a game!" );
 	}
 	
+	
 	public void sendChatMessage ( ActionEvent event ) {
+		this.client = new Client ( "127.0.0.1" , 19999 );
+		client.sendMessageToServer ( chatNameText.getText ( ) , chatText.getText ( )  );
+		listView.setItems ( listOfMessages );
 		
-		System.out.println ("Button pressed!" );
-		System.out.println ("Name is: " + chatNameText.getText () );
-		
-		
-		System.out.println ("Msg is: " + chatText.getText () );
+	}
+	
+	public static ObservableList < String > getListOfMessages ( ) {
+		return listOfMessages;
+	}
+	
+	public void setListOfMessages ( ObservableList < String > listOfMessages ) {
+		this.listOfMessages = listOfMessages;
 	}
 }
 

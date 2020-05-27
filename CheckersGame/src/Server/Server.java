@@ -18,6 +18,9 @@ public class Server {
 	private ArrayList<ServerClient> clients = new ArrayList<>();
 	//private ArrayList<Thread> clientThreads = new ArrayList<>();
 	private HashMap<String, Thread> clientThreads = new HashMap<>();
+	boolean isRunning;
+	boolean alreadyContainsName;
+	boolean isAChatMessage;
 	
 	
 	public static void main(String[] args) {
@@ -25,6 +28,7 @@ public class Server {
 		System.out.println("Loading server");
 		Server server = new Server();
 		server.connect();
+		
 	}
 	
 	
@@ -33,29 +37,69 @@ public class Server {
 		try {
 			this.serverSocket = new ServerSocket(port);
 			
-			boolean isRunning = true;
+			isRunning= true;
 			while (isRunning) {
 				
 				System.out.println("Waiting for clients...");
 				Socket socket = this.serverSocket.accept();
 				
+				
 				System.out.println("Client connected via address: " + socket.getInetAddress().getHostAddress());
 				System.out.println("Connected clients: " + this.clients.size());
 				DataInputStream in = new DataInputStream(socket.getInputStream());
-				String nickname = in.readUTF();
-				System.out.println ("We received: " + nickname );
+				String message = in.readUTF();
+				System.out.println ("We received: " + message );
 				
-				ServerClient serverClient = new ServerClient(socket, nickname, this);
+				alreadyContainsName = false;
+				
+				
+				ServerClient serverClient = new ServerClient(socket, message, this);
 				Thread t = new Thread(serverClient);
 				t.start();
-				this.clientThreads.put(nickname, t);
-				this.clients.add(serverClient);
 				
-				serverClient.writeUTF ( "Welkom in de server :) " + nickname );
+				System.out.println ("message is: "  + message );
+				
+				
+				if (message.contains ( "chatmsgMessage" )) {
+					System.out.println ("Message is a chat message!!!" );
+					sendToAllClients ( message );
+					isAChatMessage = true;
+				}
+				
+				for ( int i = 0 ; i <  clients.size (); i++ )
+				{
+					
+					if (this.clients.get ( i ).getName ().equals ( message )) {
+						alreadyContainsName = true;
+					}
+				}
+				
+				
+				if ( !alreadyContainsName && !isAChatMessage) {
+					this.clientThreads.put(message, t);
+					this.clients.add(serverClient);
 
-//				for (ServerClient c : clients) {
-//					c.writeUTF("Client connected via address: " + socket.getInetAddress().getHostAddress());
-//				}
+				}
+				
+				isAChatMessage = false;
+				
+				
+				alreadyContainsName = false;
+				
+				Thread readSocketThread = new Thread( () -> {
+					receiveDataFromSocket(in);
+				});
+				
+				readSocketThread.start();
+				
+//				sendToAllClients ( "Number of current clients: " + clients.size () ); // if we want to check how many clients are connected
+				
+				for ( int i = 0 ; i < clients.size ( ); i++ )
+				{
+					System.out.println ("Clients contains this name: " + clients.get ( i ).getName () );
+				}
+				
+				
 			}
 			
 			this.serverSocket.close();
@@ -65,6 +109,20 @@ public class Server {
 			e.printStackTrace();
 		}
 	}
+	
+	private void receiveDataFromSocket(DataInputStream in) {
+		String received = "";
+		while (isRunning) {
+			
+			try {
+				received = in.readUTF();
+				System.out.println("Received this on method receiveDataFromSocket" + received);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	
 	public void sendToAllClients(String text) {
 		for (ServerClient client : clients) {
@@ -95,6 +153,5 @@ public class Server {
 		
 		this.clientThreads.remove(nickname);
 		
-		System.out.println("Connected clients: " + this.clients.size());
 	}
 }
