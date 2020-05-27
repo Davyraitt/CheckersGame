@@ -1,15 +1,19 @@
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class CheckersApp extends Application {
 	
 	public static final int TILE_SIZE = 100; // i tile is 100*100
 	public static final int WIDTH = 8; // the board is 8 width
 	public static final int HEIGHT = 8; // the board is 8 height
+	public String state;
 	
 	private Group tileGroup = new Group (  ); //seperate groups for the tiles, Group is a collection from Javafx
 	private Group pieceGroup = new Group (  ); //seperate groups for the pieces, Group is a collection from Javafx
@@ -19,11 +23,12 @@ public class CheckersApp extends Application {
 	private Tile[][] boardTiles = new Tile[WIDTH][HEIGHT];
 	
 	
-	private Parent createContent() {
+	private Parent createContentCheckers() {
 		Pane root = new Pane();
 		root.setPrefSize ( WIDTH * TILE_SIZE, HEIGHT*TILE_SIZE );
 		root.getChildren ().addAll ( tileGroup, pieceGroup );
 		
+		state = "Menu";
 		//Creating our tiles
 		for ( int y = 0 ; y < HEIGHT ; y++ )
 		{
@@ -59,13 +64,43 @@ public class CheckersApp extends Application {
 		return root;
 	}
 	
+	private Parent createContentMenu ( ) {
+		Parent root = null;
+		try
+		{
+			root = FXMLLoader.load ( getClass ( ).getResource ( "menuLayout/sample.fxml") );
+		} catch ( IOException e )
+		{
+			e.printStackTrace ( );
+		}
+		
+		return root;}
+	
+	
+	
+	
 	@Override
 	public void start ( Stage primaryStage ) throws Exception {
-		Scene scene = new Scene (createContent ());
-		primaryStage.setScene ( scene );
+		
+		
+		Scene scene = new Scene (createContentCheckers ());
+		
+		Scene scene2 = new Scene (createContentMenu ());
+		
+		if (state.equals ( "Checkers" )) {
+			primaryStage.setScene ( scene );
+		}
+		
+		if (state.equals ( "Menu" )) {
+			primaryStage.setScene ( scene2 );
+		}
+		
+		
 		primaryStage.show ();
 		
+		
 	}
+	
 	
 	public static void main ( String[] args ) {
 		launch (args);
