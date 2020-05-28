@@ -1,10 +1,7 @@
-package menuLayout;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Client {
 	
@@ -85,7 +82,7 @@ public class Client {
 			try {
 				received = in.readUTF();
 				if (received.contains ( "chatmsgMessage" )) {
-					menuController.getListOfMessages ().add ( received );
+					CheckersApp.getListOfMessages ().add ( received );
 				}
 				
 				System.out.println(received);
@@ -104,4 +101,6 @@ public class Client {
 			e.printStackTrace();
 		}
 	}
+	
+	
 }

@@ -8,9 +8,9 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #3F93D9;" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="menuLayout.menuController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #3F93D9;" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CheckersApp">
    <children>
-      <Button layoutX="342.0" layoutY="45.0" mnemonicParsing="false" onAction="#connectButtonPressed" opacity="0.9" prefHeight="54.0" prefWidth="134.0" style="-fx-background-color: #D99C3F;" text="PLAY" textFill="#373be6">
+      <Button fx:id="playButton" layoutX="342.0" layoutY="45.0" mnemonicParsing="false" onAction="#playButtonPressed" opacity="0.9" prefHeight="54.0" prefWidth="134.0" style="-fx-background-color: #D99C3F;" text="PLAY" textFill="#373be6">
          <font>
             <Font name="System Bold" size="20.0" />
          </font>
